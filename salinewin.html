@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kill Them ALL.</title>
+  <link rel="shortcut icon" href="https://raw.githubusercontent.com/TheCommonSchoolHacker/werrerew/refs/heads/main/bruh.png">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Press Start 2P', monospace;
+      background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTgbaXr-hK8vEJ6cnQXhHmFx_6_opFS90JKA&s");
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #343a40;
+      padding: 10px 20px;
+      text-align: center;
+    }
+    .logo {
+      width: 40px;
+      height: 40px;
+      margin-right: 10px;
+    }
+    .container, .auth-container {
+      max-width: 800px;
+      margin: 80px auto;
+      padding: 20px;
+      background: rgb(77, 10, 10);
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(255, 0, 0, 0.1);
+      text-align: center;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+      background-color: red;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    footer {
+      background-color: #21a060;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #111;
+    }
+    #logo {
+      height: 30px;
+      margin-right: 10px;
+    }
+    #logo-container {
+      display: flex;
+      align-items: center;
+    }
+    #itemInputContainer {
+      display: flex;
+      gap: 10px;
+    }
+    .item-list-container {
+      margin: 20px;
+    }
+    .item {
+      margin: 10px 0;
+    }
+    .item button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container" id="authContainer">
+    <h2>Enter Access Code</h2>
+    <input type="password" id="secretInput" placeholder="Enter code">
+    <button onclick="checkSecret()">Access</button>
+  </div>
+
+  <div class="container" id="mainContent" style="display:none;">
+    <header>
+      <img src="https://raw.githubusercontent.com/TheCommonSchoolHacker/werrerew/refs/heads/main/bruh.png" class="logo" />
+      <h1>Extension Viewer</h1>
+    </header>
+
+    <label for="extensionSelect">Installed Extensions:</label>
+    <select id="extensionSelect" onchange="showExtensionOptions(this)">
+      <option>Loading...</option>
+    </select>
+
+    <div class="extension-options" id="extensionOptions" style="display:none;">
+      <p>Options for selected extension:</p>
+      <ul>
+        <li>Placeholder Option 1</li>
+        <li>Placeholder Option 2</li>
+      </ul>
+    </div>
+
+    <button id="killButton" style="display:none;">KILL</button>
+    <button id="bookmarkletAccess">GO TO BOOKMARKLET</button>
+
+    <div id="bookmarkletContainer" style="display:none;">
+      <div class="header">
+        <div id="logo-container">
+          <img id="logo" src="https://blobby-boi.github.io/URLRedirector/favicon.ico" alt="Logo">
+          <span id="itemListText">BlobeBM: Bookmarklet Runner</span>
+        </div>
+        <div id="itemInputContainer">
+          <input type="text" id="newItemInput" placeholder="Enter the bookmarklet here">
+          <button id="addItemButton">Add Bookmarklet</button>
+        </div>
+      </div>
+      <div class="overlay" id="overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:1000;"></div>
+      <div class="item-list-container">
+        <ul id="itemList" class="item-list"></ul>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Made by that one kid you know.
+  </footer>
+
+  <script>
+    const SECRET_CODE = "school so ahh"
+
+    function checkSecret() {
+      const input = document.getElementById("secretInput").value
+      if (input === SECRET_CODE) {
+        document.getElementById("authContainer").style.display = "none"
+        document.getElementById("mainContent").style.display = "block"
+        populateSelectOptions()
+      } else {
+        alert("Incorrect code.")
+      }
+    }
+
+    async function checkExtensionURL(url) {
+      try {
+        const res = await fetch(url)
+        return res.ok
+      } catch {
+        return false
+      }
+    }
+
+    async function populateSelectOptions() {
+      const select = document.getElementById("extensionSelect")
+      const killButton = document.getElementById("killButton")
+      const extensionOptions = document.getElementById("extensionOptions")
+      select.innerHTML = ""
+      killButton.style.display = "none"
+      extensionOptions.style.display = "none"
+
+      const extensions = {
+        "Test Extension": "chrome-extension://ghbmnnjooekpmoecnnnilnnbdlolhkhi/main.html",
+        "Securly (1st ID)": "chrome-extension://iheobagjkfklnlikgihanlhcddjoihkg/fonts/Metropolis.css",
+        "GoGuardian": "chrome-extension://haldlgldplgnggkjaafhelgiaglafanh/icons/enabled-dark-128.png"
+      }
+
+      let found = false
+      for (const [name, url] of Object.entries(extensions)) {
+        if (await checkExtensionURL(url)) {
+          const opt = document.createElement("option")
+          opt.value = name
+          opt.textContent = name
+          select.appendChild(opt)
+          found = true
+        }
+      }
+
+      if (!found) {
+        const opt = document.createElement("option")
+        opt.textContent = "You need sum extensions that are supported."
+        select.appendChild(opt)
+      }
+
+      if (found) killButton.style.display = "inline-block"
+    }
+
+    function showExtensionOptions(select) {
+      const selected = select.value
+      const optionsBox = document.getElementById("extensionOptions")
+      optionsBox.style.display = selected && selected !== "You need sum extensions that are supported." ? "block" : "none"
+    }
+
+    document.getElementById('bookmarkletAccess').addEventListener('click', () => {
+      document.getElementById('bookmarkletContainer').style.display = 'block'
+    })
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const itemList = document.getElementById('itemList')
+      const newItemInput = document.getElementById('newItemInput')
+      const addButton = document.getElementById('addItemButton')
+      const overlay = document.getElementById('overlay')
+
+      addButton.addEventListener('click', () => {
+        const displayValue = prompt('How do you want the bookmarklet to be called?')
+        if (displayValue === null) return
+        const itemValue = newItemInput.value.trim()
+        if (!itemValue) return
+        addItemToList(displayValue, itemValue)
+        saveItemsToLocalStorage()
+        newItemInput.value = ''
+      })
+
+      function addItemToList(displayValue, itemValue) {
+        const newItem = document.createElement('li')
+        newItem.className = 'item'
+
+        const itemButton = document.createElement('button')
+        itemButton.className = 'item-button'
+        itemButton.textContent = displayValue
+        itemButton.title = itemValue
+        itemButton.addEventListener('click', () => {
+          const selectedItemValue = itemButton.title
+          runScript(selectedItemValue)
+        })
+
+        const removeButton = document.createElement('button')
+        removeButton.textContent = 'Remove'
+        removeButton.addEventListener('click', () => {
+          itemList.removeChild(newItem)
+          saveItemsToLocalStorage()
+        })
+
+        const editDisplayButton = document.createElement('button')
+        editDisplayButton.textContent = 'Edit Name'
+        editDisplayButton.addEventListener('click', () => {
+          const newDisplayValue = prompt('Enter the new name:', itemButton.textContent)
+          if (newDisplayValue !== null) {
+            itemButton.textContent = newDisplayValue
+            saveItemsToLocalStorage()
+          }
+        })
+
+        const editItemButton = document.createElement('button')
+        editItemButton.textContent = 'Edit Bookmarklet'
+        editItemButton.addEventListener('click', () => {
+          const newItemValue = prompt('Enter the new bookmarklet code:', itemButton.title)
+          if (newItemValue !== null) {
+            itemButton.title = newItemValue
+            saveItemsToLocalStorage()
+          }
+        })
+
+        newItem.appendChild(itemButton)
+        newItem.appendChild(removeButton)
+        newItem.appendChild(editDisplayButton)
+        newItem.appendChild(editItemButton)
+
+        itemList.appendChild(newItem)
+      }
+
+      function saveItemsToLocalStorage() {
+        const items = Array.from(document.querySelectorAll('.item-button')).map(button => {
+          return {
+            display: button.textContent,
+            item: button.title
+          }
+        })
+        localStorage.setItem('items', JSON.stringify(items))
+      }
+
+      function runScript(selectedItemValue) {
+        overlay.style.display = 'flex'
+        setTimeout(() => {
+          try {
+            eval(selectedItemValue)
+          } catch (error) {
+            alert('An error occurred while executing the bookmarklet.')
+          }
+          overlay.style.display = 'none'
+        }, 500)
+      }
+
+      const storedItems = localStorage.getItem('items')
+      if (storedItems) {
+        const parsedItems = JSON.parse(storedItems)
+        parsedItems.forEach(item => {
+          addItemToList(item.display, item.item)
+        })
+      }
+    })
+  </script>
+</body>
+</html>
